@@ -7,7 +7,7 @@ This folder is the deployment copy. The live app is a static site served with Gi
 
 ## Update and redeploy
 
-After Math Lab changes, run `sh ./redeploy.sh` from this folder. It copies the latest solver and practice files from the Math Lab workspace, rebuilds the static site shell, then commits and pushes the update to GitHub Pages.
+Before the first local push, install GitHub CLI from [cli.github.com](https://cli.github.com/) and authenticate once with `gh auth login && gh auth setup-git`. Then, after Math Lab changes, run `sh ./redeploy.sh` from this folder. It copies the latest solver and practice files from the Math Lab workspace, rebuilds the static site shell, then commits and pushes the update to GitHub Pages.
 
 ## Online and offline behavior
 
