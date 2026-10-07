@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ed">
+  <title>Math Lab — Functions Practice</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f3ed;
+      --white: #fffefa;
+      --ink: #1e302b;
+      --muted: #68766f;
+      --line: #dedfd6;
+      --green: #17634e;
+      --green-dark: #104a3a;
+      --mint: #e1efe8;
+      --coral: #d7654c;
+      --coral-pale: #fff0eb;
+      --gold: #e8bc58;
+      --shadow: 0 14px 40px rgba(30, 48, 43, .07);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.5; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { min-height: 74px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px max(22px, calc((100vw - 1240px) / 2)); border-bottom: 1px solid var(--line); background: rgba(255,254,250,.82); }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 780; letter-spacing: -.035em; font-size: 19px; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; color: white; background: var(--green); font-family: Georgia, serif; font-size: 21px; font-style: italic; }
+    .brand small { display: block; margin-top: -3px; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 650; }
+    .stats { display: flex; align-items: center; gap: 10px; }
+    .stat { display: flex; align-items: center; gap: 8px; min-width: 98px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
+    .stat-icon { font-size: 17px; }
+    .stat strong { display: block; line-height: 1.1; font-size: 15px; }
+    .stat span:last-child { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .layout { width: min(1240px, calc(100% - 44px)); margin: 38px auto 50px; display: grid; grid-template-columns: 265px minmax(0,1fr); gap: 38px; align-items: start; }
+    .rail { padding: 8px 8px 0 0; }
+    .eyebrow { color: var(--green); text-transform: uppercase; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+    .rail h1 { margin: 7px 0 8px; font-size: 26px; line-height: 1.16; letter-spacing: -.045em; }
+    .rail-copy { margin: 0 0 25px; color: var(--muted); font-size: 14px; }
+    .field-label { display: block; margin: 0 0 8px; font-size: 12px; font-weight: 750; }
+    select { appearance: none; width: 100%; padding: 12px 38px 12px 13px; border: 1px solid #c9d2cb; border-radius: 11px; color: var(--ink); background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2317634e' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center; }
+    select:focus, input:focus, button:focus-visible { outline: 3px solid rgba(23,99,78,.2); outline-offset: 2px; }
+    .side-button { width: 100%; margin-top: 11px; padding: 11px 14px; border: 0; border-radius: 11px; color: white; background: var(--green); font-weight: 750; transition: background .15s, transform .15s; }
+    .side-button:hover, .check-button:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .topic-list { display: grid; gap: 8px; margin: 26px 0 28px; }
+    .topic-chip { display: flex; align-items: center; gap: 10px; padding: 9px 0; color: #4b5c55; font-size: 13px; }
+    .topic-chip b { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 9px; color: var(--green); background: var(--mint); font-size: 12px; }
+    .tip { padding: 15px; border: 1px solid #e7ddc7; border-radius: 14px; background: #fbf4e5; }
+    .tip strong { display: block; margin-bottom: 4px; font-size: 13px; }
+    .tip p { margin: 0; color: #686149; font-size: 12px; }
+    .workout { min-width: 0; }
+    .workout-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    .workout-head h2 { margin: 2px 0 0; font-size: 20px; letter-spacing: -.03em; }
+    .session-pill { padding: 6px 10px; border-radius: 999px; background: #e8e7df; color: #57635d; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .problem { overflow: hidden; border: 1px solid var(--line); border-radius: 19px; background: var(--white); box-shadow: var(--shadow); }
+    .problem-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 15px 21px; border-bottom: 1px solid #eeeee7; }
+    .badges { display: flex; flex-wrap: wrap; gap: 7px; }
+    .badge { padding: 5px 9px; border-radius: 999px; color: var(--green); background: var(--mint); font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .badge.subtle { color: #6d746f; background: #f0f0eb; }
+    .question-no { color: #78837d; font-size: 11px; font-weight: 700; }
+    .problem-body { padding: 23px 24px 24px; }
+    .question { margin: 0 0 7px; font-size: clamp(20px, 2vw, 25px); line-height: 1.3; letter-spacing: -.035em; }
+    .question-help { margin: 0 0 17px; color: var(--muted); font-size: 13px; }
+    .piecewise-formula { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; width: fit-content; margin: 0 0 14px; padding: 10px 14px; border-radius: 10px; color: #243a32; background: #f4f6f1; font-family: Georgia, serif; font-size: 16px; }
+    .piecewise-formula .rules { display: grid; gap: 3px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; }
+    .graph-wrap { margin: 0 0 18px; padding: 8px 9px 3px; border: 1px solid #e5e8e1; border-radius: 13px; background: #fcfdfa; }
+    .graph-wrap[hidden] { display: none; }
+    .graph-svg { display: block; width: 100%; height: auto; max-height: 342px; }
+    .graph-caption { margin: 0 0 5px 8px; color: #77827c; font-size: 10px; }
+    .table-wrap { width: min(420px, 100%); margin: 0 0 18px; overflow: hidden; border: 1px solid #e4e6de; border-radius: 11px; }
+    .table-wrap[hidden], .piecewise-formula[hidden] { display: none; }
+    table { width: 100%; border-collapse: collapse; text-align: center; }
+    th, td { padding: 10px; border-bottom: 1px solid #e9ebe5; }
+    th { color: #59675f; background: #f2f5ef; font-size: 12px; }
+    tr:last-child td { border-bottom: 0; }
+    td { font-variant-numeric: tabular-nums; }
+    .answer-area { padding-top: 3px; }
+    .answer-label { display: block; margin-bottom: 7px; font-size: 12px; font-weight: 750; }
+    .answer-input { width: min(360px,100%); min-height: 45px; padding: 10px 12px; border: 1px solid #c9d2cb; border-radius: 10px; color: var(--ink); background: white; }
+    .input-note { margin: 6px 0 0; color: #76827a; font-size: 11px; }
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+    .choice { display: flex; align-items: flex-start; gap: 9px; padding: 10px 11px; border: 1px solid #e1e4dc; border-radius: 10px; background: #fff; font-size: 12px; cursor: pointer; transition: border-color .15s, background .15s; }
+    .choice:has(input:checked) { border-color: #7ba18d; background: #f0f7f2; }
+    .choice input { margin: 2px 0 0; accent-color: var(--green); }
+    .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 17px; }
+    .check-button, .next-button, .steps-button { min-height: 42px; padding: 9px 16px; border: 0; border-radius: 10px; font-weight: 750; transition: background .15s, transform .15s; }
+    .check-button { color: white; background: var(--green); }
+    .next-button { border: 1px solid #cfdbd2; color: var(--green); background: #f3f8f4; }
+    .next-button:hover { background: #e7f1e9; }
+    .steps-button { padding: 7px 0; color: var(--green); background: transparent; text-decoration: underline; text-underline-offset: 3px; }
+    .feedback { margin-top: 17px; padding: 13px 15px; border-radius: 12px; }
+    .feedback[hidden], .steps[hidden] { display: none; }
+    .feedback.wrong { border: 1px solid #f0c9bc; background: var(--coral-pale); }
+    .feedback.right { border: 1px solid #c9e1d2; background: #eef7f0; }
+    .feedback-title { margin: 0 0 3px; font-weight: 800; font-size: 14px; }
+    .feedback.wrong .feedback-title { color: #a34631; }
+    .feedback.right .feedback-title { color: var(--green); }
+    .feedback p { margin: 0; color: #58645e; font-size: 12px; }
+    .steps { margin: 8px 0 0; padding: 10px 0 0 22px; border-top: 1px solid rgba(58,84,69,.14); color: #384c42; font-size: 12px; }
+    .steps li { padding: 2px 0; }
+    .statusline { min-height: 20px; margin-top: 10px; color: var(--muted); font-size: 11px; }
+    .footer-note { margin-top: 14px; color: #78837c; text-align: right; font-size: 11px; }
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 205px minmax(0,1fr); gap: 22px; }
+      .stat { min-width: 82px; padding: 7px 9px; }
+      .problem-body { padding: 19px; }
+    }
+    @media (max-width: 650px) {
+      .topbar { padding: 11px 15px; min-height: 64px; }
+      .brand { font-size: 17px; gap: 9px; }
+      .brand-mark { width: 34px; height: 34px; }
+      .stats { gap: 6px; }
+      .stat { min-width: 0; padding: 6px 8px; gap: 5px; }
+      .stat-icon { font-size: 14px; }
+      .stat span:last-child { font-size: 8px; }
+      .stat strong { font-size: 13px; }
+      .layout { width: min(100% - 28px, 550px); margin: 24px auto 35px; grid-template-columns: 1fr; gap: 22px; }
+      .rail { padding: 0; display: grid; grid-template-columns: 1fr; }
+      .rail h1 { font-size: 23px; }
+      .rail-copy { margin-bottom: 15px; }
+      .topic-list { grid-template-columns: repeat(3,1fr); gap: 4px; margin: 12px 0 14px; }
+      .topic-chip { align-items: flex-start; font-size: 10px; line-height: 1.3; gap: 6px; }
+      .topic-chip b { flex: 0 0 25px; width: 25px; height: 25px; }
+      .tip { display: none; }
+      .side-button { margin-top: 8px; }
+      .workout-head { margin-bottom: 12px; }
+      .workout-head h2 { font-size: 18px; }
+      .problem { border-radius: 15px; }
+      .problem-head { padding: 12px 15px; }
+      .problem-body { padding: 17px 15px 19px; }
+      .question { font-size: 20px; }
+      .choices { grid-template-columns: 1fr; gap: 7px; }
+      .graph-wrap { padding: 5px 3px 2px; }
+      .graph-svg { max-height: none; }
+      .footer-note { text-align: left; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">ƒ</span><div>Math Lab<small>practice with a plan</small></div></div>
+    <div class="stats" aria-label="Practice session stats">
+      <div class="stat"><span class="stat-icon" aria-hidden="true">🔥</span><div><strong id="streak">0</strong><span>streak</span></div></div>
+      <div class="stat"><span class="stat-icon" aria-hidden="true">✓</span><div><strong id="score">0/0</strong><span>correct</span></div></div>
+    </div>
+  </header>
+  <main class="layout">
+    <aside class="rail" aria-label="Practice controls">
+      <div class="eyebrow">Functions · Precalculus</div>
+      <h1>Make the graph make sense.</h1>
+      <p class="rail-copy">A few focused reps can turn a confusing graph into a familiar one.</p>
+      <label class="field-label" for="topic">Choose your practice</label>
+      <select id="topic">
+        <option value="mixed">Mixed review</option>
+        <option value="rate">Average rate of change</option>
+        <option value="piecewise">Piecewise functions</option>
+        <option value="extrema">Extrema on a graph</option>
+      </select>
+      <button class="side-button" id="freshButton" type="button">↻ &nbsp;New problem</button>
+      <div class="topic-list" aria-label="Topics included">
+        <div class="topic-chip"><b>Δ</b><span>Rate of change</span></div>
+        <div class="topic-chip"><b>ƒ</b><span>Piecewise rules</span></div>
+        <div class="topic-chip"><b>↗</b><span>Local &amp; absolute extrema</span></div>
+      </div>
+      <div class="tip"><strong>Try a 10-minute round</strong><p>Do 3 mixed questions, then switch to the topic that felt least automatic. Ask for the steps after each miss.</p></div>
+    </aside>
+
+    <section class="workout" aria-label="Practice question">
+      <div class="workout-head"><div><div class="eyebrow">Your next rep</div><h2>Functions workout</h2></div><span class="session-pill" id="sessionPill">Question 1</span></div>
+      <article class="problem">
+        <div class="problem-head"><div class="badges"><span class="badge" id="topicBadge">Mixed review</span><span class="badge subtle" id="sourceBadge">Graph</span></div><span class="question-no" id="questionNumber">#01</span></div>
+        <div class="problem-body">
+          <h3 class="question" id="questionText"></h3>
+          <p class="question-help" id="questionHelp"></p>
+          <div class="piecewise-formula" id="piecewiseFormula" hidden></div>
+          <div class="table-wrap" id="tableWrap" hidden></div>
+          <figure class="graph-wrap" id="graphWrap" hidden>
+            <div id="graph" aria-live="polite"></div>
+            <figcaption class="graph-caption">Use the plotted points and labeled axes. Open circles are not included; filled circles are included.</figcaption>
+          </figure>
+          <div class="answer-area" id="answerArea"></div>
+          <div class="actions"><button class="check-button" id="checkButton" type="button">Check answer</button><button class="next-button" id="nextButton" type="button">Next problem&nbsp; →</button></div>
+          <div class="feedback" id="feedback" role="status" aria-live="polite" hidden>
+            <p class="feedback-title" id="feedbackTitle"></p>
+            <p id="feedbackCopy"></p>
+            <button class="steps-button" id="stepsButton" type="button">Show the steps</button>
+            <ol class="steps" id="steps" hidden></ol>
+          </div>
+          <div class="statusline" id="statusline" aria-live="polite"></div>
+        </div>
+      </article>
+      <p class="footer-note">Unlimited practice · no timer · mistakes are part of the method</p>
+    </section>
+  </main>
+  <script src="core.js"></script>
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const labels = { rate: "Average rate of change", piecewise: "Piecewise functions", extrema: "Extrema on a graph" };
+      let current;
+      let questionCount = 0;
+      let attempted = 0;
+      let correct = 0;
+      let streak = 0;
+      let recorded = false;
+      let solved = false;
+      let feedbackShown = false;
+      let stepsShown = false;
+
+      const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      const nice = (n) => Number.isInteger(n) ? String(n) : String(Number(n.toFixed(2)));
+      const signedTerm = (n) => n < 0 ? `− ${Math.abs(n)}` : n > 0 ? `+ ${n}` : "";
+
+      function svgGraph(problem) {
+        const d = problem.data;
+        let drawValues = [];
+        let series = [];
+        if (problem.topic === "rate") {
+          drawValues = [d.y1, d.y2];
+          series = [{ points: d.points, color: "#17634e", dots: true }];
+        } else if (problem.topic === "piecewise") {
+          const leftPoints = [{ x: -5, y: MathLabCore.valueAt(d.left, -5) }, { x: d.c, y: MathLabCore.valueAt(d.left, d.c) }];
+          const rightPoints = [{ x: d.c, y: MathLabCore.valueAt(d.right, d.c) }, { x: 5, y: MathLabCore.valueAt(d.right, 5) }];
+          drawValues = [...leftPoints, ...rightPoints].map(p => p.y);
+          series = [{ points: leftPoints, color: "#17634e", dots: false }, { points: rightPoints, color: "#17634e", dots: false }];
+        } else {
+          drawValues = d.points.map(p => p.y);
+          series = [{ points: d.points, color: "#17634e", dots: true }];
+        }
+        let yMin = Math.min(...drawValues) - 2, yMax = Math.max(...drawValues) + 2;
+        if (yMax - yMin < 8) { const center = (yMin + yMax) / 2; yMin = center - 4; yMax = center + 4; }
+        const raw = (yMax - yMin) / 6;
+        const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        const step = [1, 2, 5, 10].map(n => n * mag).find(n => n >= raw) || 10 * mag;
+        yMin = Math.floor(yMin / step) * step; yMax = Math.ceil(yMax / step) * step;
+        if (yMin === yMax) { yMin -= step; yMax += step; }
+        const W = 690, H = 330, L = 48, R = 18, T = 16, B = 34;
+        const xMin = -6, xMax = 6;
+        const X = x => L + (x - xMin) / (xMax - xMin) * (W - L - R);
+        const Y = y => T + (yMax - y) / (yMax - yMin) * (H - T - B);
+        let content = `<svg class="graph-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Coordinate graph for the ${esc(labels[problem.topic])} question">`;
+        for (let x = xMin; x <= xMax; x++) {
+          content += `<line x1="${X(x)}" y1="${T}" x2="${X(x)}" y2="${H-B}" stroke="#e9ece6" stroke-width="1"/>`;
+          content += `<text x="${X(x)}" y="${H-12}" text-anchor="middle" font-size="10" fill="#68766f">${x}</text>`;
+        }
+        for (let y = yMin; y <= yMax + step / 2; y += step) {
+          content += `<line x1="${L}" y1="${Y(y)}" x2="${W-R}" y2="${Y(y)}" stroke="#e9ece6" stroke-width="1"/>`;
+          content += `<text x="${L-9}" y="${Y(y)+3}" text-anchor="end" font-size="10" fill="#68766f">${nice(y)}</text>`;
+        }
+        if (xMin <= 0 && xMax >= 0) content += `<line x1="${X(0)}" y1="${T}" x2="${X(0)}" y2="${H-B}" stroke="#8b9a91" stroke-width="1.5"/>`;
+        if (yMin <= 0 && yMax >= 0) content += `<line x1="${L}" y1="${Y(0)}" x2="${W-R}" y2="${Y(0)}" stroke="#8b9a91" stroke-width="1.5"/>`;
+        content += `<text x="${W-R-2}" y="${H-B+20}" text-anchor="end" font-size="11" font-style="italic" fill="#42574c">x</text><text x="${L-22}" y="${T+4}" font-size="11" font-style="italic" fill="#42574c">y</text>`;
+        for (const s of series) {
+          const points = s.points;
+          content += `<polyline points="${points.map(p => `${X(p.x)},${Y(p.y)}`).join(" ")}" fill="none" stroke="${s.color}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+          if (s.dots) for (const [i, p] of points.entries()) {
+            content += `<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="5" fill="#17634e" stroke="#fffefa" stroke-width="1.5"/>`;
+            if (problem.topic === "rate" || problem.topic === "extrema") {
+              const dy = i % 2 === 0 ? -11 : 16;
+              content += `<text x="${X(p.x)}" y="${Y(p.y)+dy}" text-anchor="middle" font-size="10" font-weight="700" fill="#31483e" stroke="#fcfdfa" stroke-width="3" paint-order="stroke">(${p.x}, ${p.y})</text>`;
+            }
+          }
+        }
+        if (problem.topic === "piecewise") {
+          const ly = MathLabCore.valueAt(d.left, d.c), ry = MathLabCore.valueAt(d.right, d.c);
+          const leftOpen = d.boundarySide !== "left", rightOpen = d.boundarySide !== "right";
+          content += `<circle cx="${X(d.c)}" cy="${Y(ly)}" r="6" fill="${leftOpen ? "#fffefa" : "#17634e"}" stroke="#17634e" stroke-width="3"/><circle cx="${X(d.c)}" cy="${Y(ry)}" r="6" fill="${rightOpen ? "#fffefa" : "#17634e"}" stroke="#17634e" stroke-width="3"/>`;
+        }
+        content += `</svg>`;
+        return content;
+      }
+
+      function renderAnswer() {
+        const area = $("answerArea");
+        if (current.kind === "multi") {
+          area.innerHTML = `<span class="answer-label">Select all that apply</span><div class="choices">${current.choices.map(c => `<label class="choice"><input type="checkbox" name="answer" value="${esc(c.id)}"><span>${esc(c.label)}</span></label>`).join("")}</div><p class="input-note">There may be more than one true statement.</p>`;
+        } else {
+          const instruction = current.kind === "number-set" ? "Type x-value(s), separated by commas" : "Type your answer";
+          const placeholder = current.kind === "number-set" ? "e.g. −2, 1 (or none)" : "Number or fraction, e.g. 3/2";
+          area.innerHTML = `<label class="answer-label" for="answerInput">${instruction}</label><input class="answer-input" id="answerInput" type="text" inputmode="text" autocomplete="off" placeholder="${placeholder}" aria-label="${instruction}"><p class="input-note">${current.kind === "number-set" ? "Order does not matter." : "Fractions and decimals are both accepted."}</p>`;
+          $("answerInput").addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+        }
+      }
+
+      function nextProblem() {
+        current = MathLabCore.createProblem($("topic").value);
+        questionCount++;
+        recorded = false; solved = false; feedbackShown = false; stepsShown = false;
+        $("topicBadge").textContent = labels[current.topic];
+        $("sourceBadge").textContent = current.source === "table" ? "Table" : "Graph";
+        $("questionNumber").textContent = `#${String(questionCount).padStart(2,"0")}`;
+        $("sessionPill").textContent = `Question ${questionCount}`;
+        $("questionText").textContent = current.prompt;
+        $("questionHelp").textContent = current.topic === "rate" ? "Use the change in output over the change in input." : current.topic === "piecewise" ? "The graph marks included endpoints with a filled dot." : "Read the whole graph first, then compare the right points.";
+        $("piecewiseFormula").hidden = current.topic !== "piecewise";
+        $("tableWrap").hidden = current.source !== "table";
+        $("graphWrap").hidden = current.source !== "graph";
+        if (current.topic === "piecewise") {
+          const d = current.data;
+          $("piecewiseFormula").innerHTML = `<span>f(x) =</span><span class="rules"><span>${d.left.m}x ${signedTerm(d.left.b)} &nbsp;when x ${d.relationLeft} ${d.c}</span><span>${d.right.m}x ${signedTerm(d.right.b)} &nbsp;when x ${d.relationRight} ${d.c}</span></span>`;
+        } else $("piecewiseFormula").innerHTML = "";
+        if (current.source === "table") {
+          $("tableWrap").innerHTML = `<table aria-label="x and f of x values"><thead><tr><th>x</th><th>f(x)</th></tr></thead><tbody><tr><td>${current.data.x1}</td><td>${current.data.y1}</td></tr><tr><td>${current.data.x2}</td><td>${current.data.y2}</td></tr></tbody></table>`;
+        } else $("graph").innerHTML = svgGraph(current);
+        renderAnswer();
+        $("feedback").hidden = true;
+        $("feedback").className = "feedback";
+        $("steps").hidden = true;
+        $("steps").innerHTML = "";
+        $("stepsButton").textContent = "Show the steps";
+        $("statusline").textContent = "";
+        updateStats();
+        if (current.kind !== "multi") $("answerInput").focus({ preventScroll: true });
+      }
+
+      function getResponse() {
+        if (current.kind === "multi") return [...document.querySelectorAll('input[name="answer"]:checked')].map(el => el.value);
+        return $("answerInput").value;
+      }
+
+      function showSteps() {
+        stepsShown = !stepsShown;
+        $("steps").hidden = !stepsShown;
+        $("stepsButton").textContent = stepsShown ? "Hide the steps" : "Show the steps";
+        if (stepsShown) $("steps").innerHTML = current.explanation.map(step => `<li>${esc(step)}</li>`).join("");
+      }
+
+      function check() {
+        if (solved) { $("statusline").textContent = "You’ve solved this one—grab a fresh question when you’re ready."; return; }
+        const response = getResponse();
+        if (!recorded) { attempted++; recorded = true; }
+        const isCorrect = MathLabCore.checkAnswer(current, response);
+        feedbackShown = true;
+        $("feedback").hidden = false;
+        $("steps").hidden = true;
+        stepsShown = false;
+        $("stepsButton").textContent = "Show the steps";
+        if (isCorrect) {
+          solved = true; correct++; streak++;
+          $("feedback").className = "feedback right";
+          $("feedbackTitle").textContent = "That’s it — nice work.";
+          $("feedbackCopy").textContent = "Want the reasoning too? Open the walkthrough to see why this answer fits.";
+          $("stepsButton").textContent = "Explain why anyway";
+          $("statusline").textContent = "Correct answer locked in.";
+        } else {
+          streak = 0;
+          $("feedback").className = "feedback wrong";
+          $("feedbackTitle").textContent = "Not quite yet. Use this hint, then try again.";
+          $("feedbackCopy").textContent = current.hint;
+          $("stepsButton").textContent = "Show the steps";
+          $("statusline").textContent = "A miss resets the streak, not your progress—give it another try.";
+        }
+        updateStats();
+      }
+
+      function updateStats() {
+        $("streak").textContent = streak;
+        $("score").textContent = `${correct}/${attempted}`;
+      }
+
+      $("checkButton").addEventListener("click", check);
+      $("nextButton").addEventListener("click", nextProblem);
+      $("freshButton").addEventListener("click", nextProblem);
+      $("topic").addEventListener("change", nextProblem);
+      $("stepsButton").addEventListener("click", showSteps);
+      nextProblem();
+    })();
+  </script>
+</body>
+</html>

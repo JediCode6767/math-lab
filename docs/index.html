@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ed">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <title>Math Lab — Guided Solver</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f3ed;
+      --surface: #fffefa;
+      --ink: #1e302b;
+      --muted: #68766f;
+      --line: #dedfd6;
+      --green: #17634e;
+      --green-deep: #104a3a;
+      --mint: #e1efe8;
+      --coral: #b74c35;
+      --coral-pale: #fff0eb;
+      --gold-pale: #fbf4e5;
+      --shadow: 0 14px 40px rgba(30,48,43,.07);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: var(--ink); background: var(--paper); font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { min-height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px max(22px, calc((100vw - 1160px)/2)); border-bottom: 1px solid var(--line); background: rgba(255,254,250,.84); }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 800; letter-spacing: -.04em; }
+    .brand-mark { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 12px; color: white; background: var(--green); font: italic 22px Georgia, serif; }
+    .brand small { display: block; margin-top: -3px; color: var(--muted); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+    .top-link { color: var(--green); font-size: 12px; font-weight: 700; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+    .layout { width: min(1160px, calc(100% - 44px)); margin: 46px auto 64px; display: grid; grid-template-columns: minmax(0,1fr) 260px; gap: 44px; align-items: start; }
+    .eyebrow { margin: 0 0 9px; color: var(--green); font-size: 11px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { max-width: 740px; margin: 0; font-size: clamp(34px, 4.7vw, 55px); line-height: 1.04; letter-spacing: -.06em; }
+    .lede { max-width: 680px; margin: 15px 0 26px; color: var(--muted); font-size: 16px; }
+    .solver-box { padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }
+    .input-label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 780; }
+    textarea { display: block; width: 100%; min-height: 100px; resize: vertical; padding: 14px 15px; border: 1px solid #cbd4cc; border-radius: 12px; outline: none; color: var(--ink); background: #fff; font-size: 15px; line-height: 1.5; }
+    textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(23,99,78,.14); }
+    textarea::placeholder { color: #8b9690; }
+    .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 13px; }
+    .primary, .secondary { min-height: 43px; padding: 9px 16px; border-radius: 10px; font-weight: 760; transition: background .15s, transform .15s; }
+    .primary { border: 0; color: #fff; background: var(--green); }
+    .primary:hover:not(:disabled) { background: var(--green-deep); transform: translateY(-1px); }
+    .secondary { border: 1px solid #cbd8ce; color: var(--green); background: #f5f9f5; }
+    .secondary:hover:not(:disabled) { background: #eaf3ec; }
+    button:focus-visible, a:focus-visible { outline: 3px solid rgba(23,99,78,.25); outline-offset: 3px; }
+    button:disabled { cursor: default; opacity: .52; }
+    .privacy { margin: 10px 0 0; color: #76817b; font-size: 11px; }
+    .intake { margin-top: 17px; padding-top: 15px; border-top: 1px solid #e8eae3; }
+    .intake-title { margin: 0 0 8px; font-size: 12px; font-weight: 780; }
+    .image-dropzone { display: flex; min-height: 76px; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 11px; padding: 13px; border: 1px dashed #aabbb0; border-radius: 11px; color: #526157; background: #f8faf7; text-align: center; transition: border-color .15s, background .15s; }
+    .image-dropzone.dragging { border-color: var(--green); background: var(--mint); }
+    .dropzone-copy { font-size: 12px; font-weight: 680; }
+    .file-label { padding: 6px 10px; border: 1px solid #cbd8ce; border-radius: 8px; color: var(--green); background: white; font-size: 11px; font-weight: 740; cursor: pointer; }
+    .file-label:hover { background: #eaf3ec; }
+    .ocr-settings { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+    .ocr-settings label { color: #526157; font-size: 11px; font-weight: 700; }
+    .ocr-settings input { width: 130px; min-height: 34px; padding: 6px 9px; border: 1px solid #cbd4cc; border-radius: 8px; color: var(--ink); background: white; font: inherit; font-size: 12px; }
+    .ocr-settings .secondary { min-height: 34px; padding: 6px 10px; font-size: 11px; }
+    .ocr-status { min-height: 18px; margin: 7px 0 0; color: var(--muted); font-size: 11px; }
+    .problem-image { display: block; max-width: 100%; max-height: 240px; margin-top: 8px; border: 1px solid var(--line); border-radius: 9px; object-fit: contain; background: #fff; }
+    .problem-image[hidden] { display: none; }
+    .intake-note { margin: 6px 0 0; color: #78837c; font-size: 10px; }
+    .examples { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin-top: 16px; }
+    .examples-label { margin-right: 2px; color: var(--muted); font-size: 11px; font-weight: 750; }
+    .example { padding: 5px 9px; border: 1px solid #e0e3db; border-radius: 999px; color: #3d574a; background: #f7f8f4; font-size: 11px; transition: border-color .12s, background .12s; }
+    .example:hover { border-color: #a9c5b3; background: var(--mint); }
+    .error-box { margin-top: 15px; padding: 12px 14px; border: 1px solid #f0c9bc; border-radius: 11px; color: #863d2a; background: var(--coral-pale); font-size: 13px; }
+    .error-box[hidden], .lesson[hidden] { display: none; }
+    .lesson { margin-top: 22px; padding-top: 20px; border-top: 1px solid #e8eae3; }
+    .lesson-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 13px; }
+    .type-badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 999px; color: var(--green); background: var(--mint); font-size: 11px; font-weight: 820; }
+    .type-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .step-count { color: var(--muted); font-size: 11px; font-weight: 730; }
+    .progress { height: 4px; overflow: hidden; margin: 0 0 17px; border-radius: 999px; background: #e9ece6; }
+    .progress-fill { height: 100%; width: 0; border-radius: inherit; background: #4f9476; transition: width .2s ease; }
+    .step-card { min-height: 112px; padding: 16px 17px; border-left: 3px solid #76a98c; border-radius: 0 11px 11px 0; background: #f3f7f2; }
+    .step-card h2 { margin: 0 0 5px; font-size: 15px; letter-spacing: -.015em; }
+    .step-card p { margin: 0; color: #485b50; font-size: 13px; }
+    .all-steps { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .all-steps[hidden] { display: none; }
+    .all-steps li { padding: 11px 13px; border-left: 2px solid #94b6a0; border-radius: 0 9px 9px 0; background: #f6f8f4; }
+    .all-steps strong { display: block; margin-bottom: 3px; font-size: 12px; }
+    .all-steps p { margin: 0; color: #526157; font-size: 12px; }
+    .math { overflow-wrap: anywhere; color: #203c30; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: .96em; }
+    .lesson-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 13px; }
+    .lesson-controls .secondary { min-height: 38px; padding: 7px 12px; font-size: 12px; }
+    .lesson-controls .primary { min-height: 38px; margin-left: auto; padding: 7px 13px; font-size: 12px; }
+    .answer { margin-top: 15px; padding: 15px 16px; border: 1px solid #c9e1d2; border-radius: 12px; background: #eff7f0; }
+    .answer[hidden] { display: none; }
+    .answer-label { margin: 0 0 4px; color: var(--green); font-size: 10px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+    .answer-value { margin: 0; color: #173e2f; font-size: 18px; font-weight: 780; overflow-wrap: anywhere; }
+    .answer-tip { margin: 7px 0 0; color: #53695c; font-size: 11px; }
+    .graph-panel { margin-top: 21px; padding-top: 16px; border-top: 1px solid #e8eae3; }
+    .graph-panel summary { width: fit-content; color: var(--green); font-size: 13px; font-weight: 800; cursor: pointer; }
+    .graph-content { padding-top: 12px; }
+    .graph-copy { margin: 0 0 11px; color: var(--muted); font-size: 11px; }
+    .graph-input { min-height: 68px; font-size: 13px; }
+    .graph-controls { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+    .graph-controls button { min-height: 35px; padding: 6px 10px; font-size: 11px; }
+    .graph-canvas-wrap { position: relative; margin-top: 12px; overflow: hidden; border: 1px solid #dfe5df; border-radius: 10px; background: #fffefa; }
+    .graph-canvas { display: block; width: 100%; height: 330px; }
+    .graph-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; }
+    .graph-legend-item { display: inline-flex; max-width: 100%; align-items: center; gap: 6px; color: #536157; font: 11px/1.4 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+    .graph-legend-item i { flex: 0 0 10px; width: 10px; height: 10px; border-radius: 50%; }
+    .graph-status { min-height: 18px; margin: 6px 0 0; color: var(--muted); font-size: 10px; }
+    .rail { padding-top: 4px; }
+    .rail h2 { margin: 0 0 12px; font-size: 14px; letter-spacing: -.02em; }
+    .range-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+    .range-list li { display: flex; align-items: baseline; gap: 9px; padding: 10px 0; border-bottom: 1px solid var(--line); color: #4c5d54; font-size: 12px; }
+    .range-list li::before { content: "✓"; color: var(--green); font-weight: 850; }
+    .rail-note { margin-top: 22px; padding: 14px 15px; border: 1px solid #e7ddc7; border-radius: 13px; background: var(--gold-pale); }
+    .rail-note strong { display: block; margin-bottom: 4px; font-size: 12px; }
+    .rail-note p { margin: 0; color: #686149; font-size: 11px; }
+    .rail-foot { margin-top: 15px; color: #78837c; font-size: 10px; }
+    @media (max-width: 820px) { .layout { grid-template-columns: minmax(0,1fr) 220px; gap: 27px; margin-top: 34px; } }
+    @media (max-width: 660px) {
+      .topbar { min-height: 62px; padding: 10px 15px; }
+      .brand { font-size: 16px; }
+      .brand-mark { width: 33px; height: 33px; }
+      .top-link { font-size: 10px; }
+      .primary, .secondary { min-height: 44px; touch-action: manipulation; }
+      .graph-controls button, .ocr-settings .secondary { min-height: 44px; }
+      .file-label { min-height: 44px; display: inline-flex; align-items: center; }
+      .layout { width: min(100% - 28px, 540px); margin: 27px auto 42px; grid-template-columns: 1fr; gap: 25px; }
+      h1 { max-width: 540px; font-size: 37px; }
+      .lede { margin: 11px 0 20px; font-size: 14px; }
+      .solver-box { padding: 15px; border-radius: 14px; }
+      .graph-canvas { height: 280px; }
+      .ocr-settings input { width: 118px; }
+      .rail { padding: 0; }
+      .range-list { grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 14px; }
+      .range-list li { align-items: flex-start; font-size: 11px; }
+      .rail-note { margin-top: 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./index.html" aria-label="Math Lab guided solver home"><span class="brand-mark" aria-hidden="true">ƒ</span><span>Math Lab<small>guided solver</small></span></a>
+    <a class="top-link" href="./practice/index.html">Practice functions&nbsp; →</a>
+  </header>
+  <main class="layout">
+    <section>
+      <p class="eyebrow">A patient math partner</p>
+      <h1>Bring a problem.<br>We’ll work it out.</h1>
+      <p class="lede">Type or paste a problem, or add a screenshot. I’ll identify the math, then reveal the reasoning one step at a time.</p>
+      <div class="solver-box">
+        <label class="input-label" for="problemInput">What are you working on?</label>
+        <textarea id="problemInput" spellcheck="false" aria-describedby="inputHelp" placeholder="Try: Solve 2x + 5 = 17"></textarea>
+        <div class="controls"><button class="primary" id="solveButton" type="button">Identify &amp; start&nbsp; →</button><button class="secondary" id="clearButton" type="button">Clear</button></div>
+        <p class="privacy" id="inputHelp">I can read many common symbols, Greek letters, superscripts/subscripts, and LaTeX like \frac{x^2}{2}. Some recognized notation—such as ± and inequalities—still needs to be split into supported cases. Math solving and OCR run in your browser; screenshot OCR needs internet to load its free engine and language model.</p>
+        <section class="intake" aria-labelledby="intakeTitle">
+          <h2 class="intake-title" id="intakeTitle">Paste or attach a problem</h2>
+          <div class="image-dropzone" id="imageDropZone" tabindex="0" role="group" aria-label="Paste or drop an image or text file here">
+            <span class="dropzone-copy">Paste a screenshot here or drag a file into this area</span>
+            <label class="file-label" for="problemFile">Choose image or text file</label>
+            <input id="problemFile" type="file" accept="image/*,.txt,.md,.html,.htm" hidden>
+          </div>
+          <div class="ocr-settings">
+            <label for="ocrLanguages">OCR language code(s)</label>
+            <input id="ocrLanguages" list="ocrLanguageChoices" value="eng" placeholder="eng or eng+spa" aria-describedby="ocrNote">
+            <datalist id="ocrLanguageChoices">
+              <option value="eng" label="English"><option value="spa" label="Spanish"><option value="fra" label="French"><option value="deu" label="German"><option value="ita" label="Italian"><option value="por" label="Portuguese"><option value="nld" label="Dutch"><option value="rus" label="Russian"><option value="ara" label="Arabic"><option value="hin" label="Hindi"><option value="chi_sim" label="Chinese (simplified)"><option value="chi_tra" label="Chinese (traditional)"><option value="jpn" label="Japanese"><option value="kor" label="Korean"><option value="vie" label="Vietnamese"><option value="tur" label="Turkish"><option value="pol" label="Polish"><option value="ukr" label="Ukrainian"><option value="ell" label="Greek"><option value="heb" label="Hebrew">
+            </datalist>
+            <button class="secondary" id="readImageButton" type="button" disabled>Read image text</button>
+            <button class="secondary" id="removeImageButton" type="button" hidden>Remove image</button>
+          </div>
+          <img class="problem-image" id="problemImage" alt="Local preview of the attached math problem" hidden>
+          <p class="ocr-status" id="ocrStatus" role="status" aria-live="polite"></p>
+          <p class="intake-note" id="ocrNote">Paste rich text, or attach PNG/JPG/WebP/GIF and TXT/MD/HTML. Superscripts are normalized. Combine OCR language codes with + (like eng+spa). The image stays on this device.</p>
+          <p class="intake-note">OCR covers many printed languages but can misread handwriting, fonts, or math notation. Solver commands are currently English, Spanish, French, German, and Simplified Chinese; graph curves in pasted images are not detected.</p>
+        </section>
+        <div class="examples" aria-label="Try an example">
+          <span class="examples-label">Try one:</span>
+          <button class="example" type="button" data-example="Solve 2x + 5 = 17">Solve</button>
+          <button class="example" type="button" data-example="system: x+y=3 and x-y=1">System</button>
+          <button class="example" type="button" data-example="factor x^2 - 5x + 6">Factor</button>
+          <button class="example" type="button" data-example="differentiate x^2 sin(x)">Derivative</button>
+          <button class="example" type="button" data-example="integrate x^2 dx">Integral</button>
+          <button class="example" type="button" data-example="limit sin(x)/x as x -> 0">Limit</button>
+        </div>
+        <details class="graph-panel" id="graphPanel">
+          <summary>Optional graphing calculator</summary>
+          <div class="graph-content">
+            <p class="graph-copy">Plot up to six functions, one per line. This works alongside any question; “Graph this question” adds a best-effort plot when I can read its math.</p>
+            <label class="input-label" for="graphInput">Functions of x</label>
+            <textarea class="graph-input" id="graphInput" spellcheck="false" placeholder="x^2&#10;sin(x)&#10;2x + 1"></textarea>
+            <div class="graph-controls">
+              <button class="primary" id="drawGraphButton" type="button">Plot&nbsp; →</button>
+              <button class="secondary" id="graphFromQuestionButton" type="button">Graph this question</button>
+              <button class="secondary" id="graphZoomIn" type="button" aria-label="Zoom in">Zoom in +</button>
+              <button class="secondary" id="graphZoomOut" type="button" aria-label="Zoom out">Zoom out −</button>
+              <button class="secondary" id="graphReset" type="button">Reset view</button>
+              <button class="secondary" id="graphClearButton" type="button">Clear plots</button>
+            </div>
+            <div class="graph-canvas-wrap"><canvas class="graph-canvas" id="graphCanvas" aria-label="Coordinate plane showing plotted functions"></canvas></div>
+            <div class="graph-legend" id="graphLegend" aria-label="Plotted functions"></div>
+            <p class="graph-status" id="graphStatus" role="status" aria-live="polite">Add a function of x, one per line, then select Plot.</p>
+          </div>
+        </details>
+        <div class="error-box" id="errorBox" role="alert" hidden></div>
+        <section class="lesson" id="lesson" aria-live="polite" hidden>
+          <div class="lesson-head"><span class="type-badge"><span class="type-dot" aria-hidden="true"></span><span id="typeLabel"></span></span><span class="step-count" id="stepCount"></span></div>
+          <div class="progress" role="progressbar" aria-label="Solution progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="step-card" id="stepCard" aria-live="polite"><h2 id="stepTitle"></h2><p id="stepDetail"></p></div>
+          <ol class="all-steps" id="allSteps" hidden></ol>
+          <div class="lesson-controls"><button class="secondary" id="backButton" type="button">← Previous</button><button class="secondary" id="allButton" type="button">Show all steps</button><button class="primary" id="nextButton" type="button">Next step&nbsp; →</button></div>
+          <div class="answer" id="answerBox" hidden><p class="answer-label">Answer</p><p class="answer-value" id="answerValue"></p><p class="answer-tip">Check the result against your original question before using it.</p></div>
+        </section>
+      </div>
+    </section>
+    <aside class="rail" aria-label="Math topics">
+      <p class="eyebrow">From algebra to calculus</p>
+      <h2>What I can recognize</h2>
+      <ul class="range-list">
+        <li>Arithmetic and fractions</li>
+        <li>Algebra equations and systems</li>
+        <li>Polynomials, exponents, and roots</li>
+        <li>Functions, logarithms, and trigonometry</li>
+        <li>Simplify, factor, expand, evaluate</li>
+        <li>Derivatives and partial derivatives</li>
+        <li>Limits and definite or indefinite integrals</li>
+      </ul>
+      <div class="rail-note"><strong>We’ll go at your pace</strong><p>Use “Next step” to reveal one move at a time, or show the full solution when you want it.</p></div>
+      <p class="rail-foot">Best with symbolic notation and concise questions. If a form is unsupported or ambiguous, I’ll say so rather than invent steps.</p>
+    </aside>
+  </main>
+  <script src="./node_modules/nerdamer/dist/bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js"></script>
+  <script src="./solver.js"></script>
+  <script src="./graph.js"></script>
+  <script src="./input.js"></script>
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+      let solution = null;
+      let stepIndex = 0;
+      let allMode = false;
+
+      function showError(message) {
+        $("errorBox").textContent = message;
+        $("errorBox").hidden = false;
+        $("lesson").hidden = true;
+      }
+
+      function renderStep() {
+        if (!solution) return;
+        $("stepCard").hidden = allMode;
+        $("allSteps").hidden = !allMode;
+        if (allMode) {
+          $("allSteps").replaceChildren(...solution.steps.map(step => {
+            const item = document.createElement("li");
+            const title = document.createElement("strong");
+            const detail = document.createElement("p");
+            title.textContent = step.title;
+            detail.textContent = step.detail;
+            item.append(title, detail);
+            return item;
+          }));
+          $("typeLabel").textContent = solution.type;
+          $("stepCount").textContent = `Full solution · ${solution.steps.length} steps`;
+          $("progressFill").style.width = "100%";
+          $("lesson").querySelector(".progress").setAttribute("aria-valuenow", "100");
+          $("backButton").disabled = true;
+          $("nextButton").disabled = true;
+          $("nextButton").textContent = "Full solution shown";
+          $("allButton").textContent = "Return to guided steps";
+          $("answerBox").hidden = false;
+          $("answerValue").textContent = solution.answer;
+          return;
+        }
+        const step = solution.steps[stepIndex];
+        $("typeLabel").textContent = solution.type;
+        $("stepCount").textContent = `Step ${stepIndex + 1} of ${solution.steps.length}`;
+        $("stepTitle").textContent = step.title;
+        $("stepDetail").textContent = step.detail;
+        const progress = Math.round(((stepIndex + 1) / solution.steps.length) * 100);
+        $("progressFill").style.width = `${progress}%`;
+        $("lesson").querySelector(".progress").setAttribute("aria-valuenow", String(progress));
+        $("backButton").disabled = stepIndex === 0;
+        $("nextButton").disabled = stepIndex === solution.steps.length - 1;
+        $("nextButton").textContent = stepIndex === solution.steps.length - 1 ? "All steps shown" : stepIndex === solution.steps.length - 2 ? "Reveal the answer  →" : "Next step  →";
+        $("allButton").textContent = "Show all steps";
+        $("answerBox").hidden = stepIndex !== solution.steps.length - 1;
+        $("answerValue").textContent = solution.answer;
+      }
+
+      function startSolution() {
+        if (!window.MathSolver) { showError("The math engine didn't load. Check that the local solver files are together, then reload this page."); return; }
+        const result = MathSolver.solveRequest($("problemInput").value);
+        if (result.error) { showError(result.error); return; }
+        solution = result;
+        stepIndex = 0;
+        allMode = false;
+        $("errorBox").hidden = true;
+        $("lesson").hidden = false;
+        renderStep();
+        $("lesson").scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
+      }
+
+      $("solveButton").addEventListener("click", startSolution);
+      $("clearButton").addEventListener("click", () => {
+        $("problemInput").value = "";
+        $("errorBox").hidden = true;
+        $("lesson").hidden = true;
+        solution = null;
+        allMode = false;
+        $("problemInput").focus();
+      });
+      $("nextButton").addEventListener("click", () => { if (solution && stepIndex < solution.steps.length - 1) { stepIndex++; renderStep(); } });
+      $("backButton").addEventListener("click", () => { if (stepIndex > 0) { stepIndex--; renderStep(); } });
+      $("allButton").addEventListener("click", () => { if (solution) { allMode = !allMode; renderStep(); } });
+      $("problemInput").addEventListener("keydown", event => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") startSolution(); });
+      $("problemInput").addEventListener("input", () => { $("lesson").hidden = true; $("errorBox").hidden = true; });
+      document.querySelectorAll("[data-example]").forEach(button => button.addEventListener("click", () => {
+        $("problemInput").value = button.dataset.example;
+        $("problemInput").focus();
+        $("errorBox").hidden = true;
+        $("lesson").hidden = true;
+      }));
+    })();
+    MathGraph.attach();
+    MathInput.attach();
+  </script>
+  <script src="./pwa-register.js"></script>
+</body>
+</html>
