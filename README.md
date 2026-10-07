@@ -1,6 +1,6 @@
 # Math Lab deployment
 
-This folder is the deployment copy. The live app is a static site served with GitHub Pages; no application server is required.
+This folder is the deployment copy. The live app is a static site served with GitHub Pages; no application server is required. A `.nojekyll` marker keeps the local math-engine asset available.
 
 - Live app: https://jedicode6767.github.io/math-lab/
 - Public source repository: https://github.com/JediCode6767/math-lab
